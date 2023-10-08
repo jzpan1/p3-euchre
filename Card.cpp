@@ -148,6 +148,8 @@ std::ostream & operator<<(std::ostream &os, const Card &card) {
   os << RANK_NAMES[card.get_rank()]
      << " of "
      << SUIT_NAMES[card.get_suit()];
+
+  return os;
 }
 
 //EFFECTS Reads a Card from a stream in the format "Two of Spades"
@@ -158,6 +160,7 @@ std::istream & operator>>(std::istream &is, Card &card) {
   is >> rank >> of >> suit;
   card.rank = string_to_rank(rank);
   card.suit = string_to_suit(suit);
+  return is;
 }
 
 bool operator<(const Card &lhs, const Card &rhs) {
@@ -167,7 +170,7 @@ bool operator<(const Card &lhs, const Card &rhs) {
 //EFFECTS Returns true if lhs is lower value than rhs or the same card as rhs.
 //  Does not consider trump.
 bool operator<=(const Card &lhs, const Card &rhs) {
-  return lhs.get_rank() < rhs.get_rank();
+  return lhs.get_rank() <= rhs.get_rank();
 }
 
 //EFFECTS Returns true if lhs is higher value than rhs.
@@ -242,7 +245,7 @@ bool Card_less(const Card &a, const Card &b, Suit trump) {
 //EFFECTS Returns true if a is lower value than b.  Uses both the trump suit
 //  and the suit led to determine order, as described in the spec.
 bool Card_less(const Card &a, const Card &b, const Card &led_card, Suit trump) {
-  Suit led_suit == led_card.get_suit(trump);
+  Suit led_suit = led_card.get_suit(trump);
   //both cards are the same (shouldn't happen?)
   if (a==b) {
     return false;

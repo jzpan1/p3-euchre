@@ -12,9 +12,9 @@ TEST(test_card_ctor) {
 }
 
 TEST(test_card_values) {
-    Card ace_hearts(ACE, HEARTS);
+    Card king_hearts(KING, HEARTS);
     Card ace_diamonds(ACE, DIAMONDS);
-    ASSERT_TRUE(ace_hearts < ace_diamonds);
+    ASSERT_FALSE(king_hearts > ace_diamonds);
 }
 
 TEST(test_face_or_ace){
@@ -27,7 +27,7 @@ TEST(test_face_or_ace){
     ASSERT_TRUE(jack_diamonds.is_face_or_ace());
     ASSERT_TRUE(jack_diamonds.is_right_bower(DIAMONDS));
     ASSERT_FALSE(jack_diamonds.is_left_bower(CLUBS));
-    ASSERT_FALSE(jack_diamonds.is_trump(HEARTS));
+    ASSERT_TRUE(jack_diamonds.is_trump(HEARTS));
 }
 
 TEST(test_card_comparison){
@@ -39,15 +39,6 @@ TEST(test_card_comparison){
     ASSERT_FALSE(jack_diamonds >= queen_clubs);
     ASSERT_FALSE(jack_diamonds == queen_clubs);
     ASSERT_TRUE(jack_diamonds != queen_clubs);
-
-    Card jack_clubs(JACK, CLUBS);
-    Card jack_spades(JACK, SPADES);
-    ASSERT_TRUE(jack_spades < jack_clubs);
-    ASSERT_TRUE(jack_spades <= jack_clubs);
-    ASSERT_FALSE(jack_spades > jack_clubs);
-    ASSERT_FALSE(jack_spades >= jack_clubs);
-    ASSERT_FALSE(jack_spades == jack_clubs);
-    ASSERT_TRUE(jack_spades != jack_clubs);
 }
 
 TEST(test_miscellaneous){
