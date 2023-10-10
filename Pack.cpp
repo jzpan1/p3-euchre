@@ -13,6 +13,7 @@
   // NOTE: Do NOT use pack.in in your implementation of this function
   Pack::Pack(){
     Card current;
+    next = 0;
     for (int i = 0; i < PACK_SIZE; i++) {
         Card c((Rank)(7 + i % 6), (Suit)(i/(PACK_SIZE / 4)));
         cards[i] = c;
@@ -24,6 +25,7 @@
   // MODIFIES: pack_input
   // EFFECTS: Initializes Pack by reading from pack_input.
   Pack::Pack(std::istream& pack_input){
+    next = 0;
     std::string s;
     Card c;
     int i = 0;
@@ -61,7 +63,7 @@
 
   // EFFECTS: returns true if there are no more cards left in the pack
   bool Pack::empty() const{
-    if(next == 25){
+    if(next == 24){
         return true;
     }
     return false;
