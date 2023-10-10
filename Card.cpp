@@ -210,6 +210,7 @@ Suit Suit_next(Suit suit) {
     case Suit::DIAMONDS:
       return Suit::HEARTS;
   }
+  return suit;
 }
 
 //EFFECTS Returns true if a is lower value than b.  Uses trump to determine
