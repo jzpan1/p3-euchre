@@ -51,7 +51,12 @@
   //          https://en.wikipedia.org/wiki/In_shuffle.
   void Pack::shuffle(){
     next = 0;
-    
+    std::array <int, 24> shuff = {1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22};
+    for(int j = 0; j < 7; j++){
+      for(int i = 0; i < PACK_SIZE; i++){
+        cards[shuff[i]] = cards[i];
+      }
+    }
   }
 
   // EFFECTS: returns true if there are no more cards left in the pack
