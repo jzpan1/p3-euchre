@@ -9,6 +9,10 @@ TEST(test_card_ctor) {
     Card c(ACE, HEARTS);
     ASSERT_EQUAL(ACE, c.get_rank());
     ASSERT_EQUAL(HEARTS, c.get_suit());
+    ASSERT_EQUAL(HEARTS, c.get_suit(HEARTS));
+    Card a(string_to_rank("Three"), string_to_suit("Diamonds"));
+    ASSERT_EQUAL(THREE, a.get_rank());
+    ASSERT_EQUAL(DIAMONDS, a.get_suit());
 }
 
 TEST(test_card_values) {
@@ -49,6 +53,17 @@ TEST(test_miscellaneous){
     ASSERT_FALSE(Card_less(jack_clubs, ace_diamonds, CLUBS));
     ASSERT_TRUE(Card_less(ace_diamonds, jack_clubs, nine_heats,
                            CLUBS));
+}
+
+TEST(test_insetion_exertion){
+    Card jack_hearts = Card(JACK, HEARTS);
+    ostringstream oss;
+    oss << jack_hearts;
+    ASSERT_EQUAL(oss.str(), "Jack of Hearts");
+    istringstream iss("Three of Spades");
+    Card c;
+    iss >> c;
+    ASSERT_EQUAL(c, Card(THREE, SPADES));
 }
 
 TEST_MAIN()
