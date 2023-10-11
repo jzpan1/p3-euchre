@@ -83,7 +83,7 @@ TEST(test_simple_player_make_cards) {
   ASSERT_TRUE(tom->make_trump(Card(NINE, SPADES), true, 2, trump));
   ASSERT_EQUAL(trump, CLUBS);
 
-
+  delete tom;
   delete david;
 }
 
