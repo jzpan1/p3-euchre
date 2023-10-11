@@ -14,6 +14,8 @@ TEST(test_card_ctor) {
     ASSERT_EQUAL(THREE, a.get_rank());
     ASSERT_EQUAL(SPADES, a.get_suit());
     ASSERT_EQUAL(SPADES, a.get_suit(CLUBS));
+    ASSERT_EQUAL(TWO, Card().get_rank());
+    ASSERT_EQUAL(SPADES, Card().get_suit());
 }
 
 TEST(test_card_values) {
@@ -25,7 +27,9 @@ TEST(test_card_values) {
 TEST(test_face_or_ace){
     Card queen_hearts(QUEEN, HEARTS);
     Card jack_diamonds(JACK, DIAMONDS);
+    Card ten_clubs(TEN, CLUBS);
     ASSERT_TRUE(queen_hearts.is_face_or_ace());
+    ASSERT_FALSE(ten_clubs.is_face_or_ace());
     ASSERT_FALSE(queen_hearts.is_right_bower(CLUBS));
     ASSERT_FALSE(queen_hearts.is_left_bower(CLUBS));
     ASSERT_TRUE(queen_hearts.is_trump(HEARTS));
@@ -34,6 +38,7 @@ TEST(test_face_or_ace){
     ASSERT_FALSE(jack_diamonds.is_left_bower(CLUBS));
     ASSERT_TRUE(jack_diamonds.is_left_bower(HEARTS))
     ASSERT_TRUE(jack_diamonds.is_trump(HEARTS));
+    ASSERT_FALSE(ten_clubs.is_trump(HEARTS));
 }
 
 TEST(test_card_comparison){
@@ -61,6 +66,9 @@ TEST(test_miscellaneous){
     Card nine_hearts(NINE, HEARTS);
     Card ten_spades(TEN, SPADES);
     ASSERT_EQUAL(Suit_next(HEARTS), DIAMONDS);
+    ASSERT_EQUAL(Suit_next(DIAMONDS), HEARTS);
+    ASSERT_EQUAL(Suit_next(SPADES), CLUBS);
+    ASSERT_EQUAL(Suit_next(CLUBS), SPADES);
     ASSERT_FALSE(Card_less(jack_clubs, ace_diamonds, CLUBS));
     ASSERT_TRUE(Card_less(ace_diamonds, jack_clubs, nine_hearts,
                            CLUBS));
