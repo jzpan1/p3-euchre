@@ -51,7 +51,94 @@ TEST(test_simple_player_play_card) {
   delete bob;
 }
 
-TEST(test_simple_player_make_cards) {
+TEST(test_simple_player_play_card2) {
+  Player * bob = Player_factory("Bob", "Simple");
+  bob->add_card(Card(NINE, SPADES));
+  bob->add_card(Card(TEN, SPADES));
+  bob->add_card(Card(QUEEN, SPADES));
+
+  Card nine_diamonds(NINE, DIAMONDS);
+  Card card_played = bob->play_card(
+    nine_diamonds,
+    HEARTS
+  );
+  ASSERT_EQUAL(card_played, Card(NINE, SPADES));
+
+  bob->add_card(Card(NINE, SPADES));
+  card_played = bob->play_card(
+    Card(NINE, HEARTS),
+    HEARTS
+  );
+  ASSERT_EQUAL(card_played, Card(NINE, SPADES));
+
+  bob->add_card(Card(NINE, SPADES));
+  card_played = bob->play_card(
+    Card(NINE, CLUBS),
+    HEARTS
+  );
+  ASSERT_EQUAL(card_played, Card(NINE, SPADES));
+
+  bob->add_card(Card(NINE, SPADES));
+  card_played = bob->play_card(
+    Card(JACK, SPADES),
+    HEARTS
+  );
+  ASSERT_EQUAL(card_played, Card(QUEEN, SPADES));
+
+  delete bob;
+}
+
+TEST(test_simple_player_lead_card) {
+  Player * bob = Player_factory("Bob", "Simple");
+  bob->add_card(Card(NINE, SPADES));
+  bob->add_card(Card(QUEEN, SPADES));
+  bob->add_card(Card(KING, HEARTS));
+  bob->add_card(Card(ACE, DIAMONDS));
+  bob->add_card(Card(JACK, DIAMONDS));
+
+  Card card_played = bob->lead_card(HEARTS);
+  ASSERT_EQUAL(card_played, Card(ACE, DIAMONDS));
+  bob->add_card(Card(ACE, DIAMONDS));
+  
+  card_played = bob->lead_card(CLUBS);
+  ASSERT_EQUAL(card_played, Card(ACE, DIAMONDS));
+  bob->add_card(Card(ACE, DIAMONDS));
+
+  card_played = bob->lead_card(DIAMONDS);
+  ASSERT_EQUAL(card_played, Card(KING, HEARTS));
+  bob->add_card(Card(KING, HEARTS));
+  
+  card_played = bob->lead_card(SPADES);
+  ASSERT_EQUAL(card_played, Card(ACE, DIAMONDS));
+
+  delete bob;
+}
+
+TEST(test_all_jack_lead_card) {
+  Player * steve = Player_factory("Tom", "Simple");
+  steve->add_card(Card(JACK, CLUBS));
+  steve->add_card(Card(JACK, SPADES));
+
+  Card card_played = steve->lead_card(CLUBS);
+  ASSERT_EQUAL(card_played, Card(JACK, CLUBS));
+  steve->add_card(Card(JACK, CLUBS));
+  
+  card_played = steve->lead_card(SPADES);
+  ASSERT_EQUAL(card_played, Card(JACK, SPADES));
+  steve->add_card(Card(JACK, SPADES));
+
+  steve->add_card(Card(KING, SPADES));
+  card_played = steve->lead_card(DIAMONDS);
+  ASSERT_EQUAL(card_played, Card(KING, SPADES));
+  steve->add_card(Card(KING, SPADES));
+  
+  card_played = steve->lead_card(HEARTS);
+  ASSERT_EQUAL(card_played, Card(KING, SPADES));
+
+  delete steve;
+}
+
+TEST(test_simple_player_make_card1) {
   Player * david = Player_factory("David", "Simple");
   david->add_card(Card(NINE, HEARTS));
   david->add_card(Card(TEN, SPADES));
@@ -59,12 +146,6 @@ TEST(test_simple_player_make_cards) {
   david->add_card(Card(KING, CLUBS));
   david->add_card(Card(ACE, SPADES));
 
-  Player * tom = Player_factory("Tom", "Simple");
-  tom->add_card(Card(NINE, CLUBS));
-  tom->add_card(Card(TEN, DIAMONDS));
-  tom->add_card(Card(QUEEN, SPADES));
-  tom->add_card(Card(KING, SPADES));
-  tom->add_card(Card(ACE, SPADES));
 
   david->add_and_discard(
     Card(JACK, HEARTS)
@@ -74,17 +155,64 @@ TEST(test_simple_player_make_cards) {
   ASSERT_TRUE(david->make_trump(Card(NINE, SPADES), true, 2, trump));
   ASSERT_EQUAL(trump, CLUBS);
 
-  ASSERT_FALSE(david->make_trump(Card(NINE, SPADES), false, 1, trump)); //true
+  ASSERT_FALSE(david->make_trump(Card(NINE, SPADES), false, 1, trump));
 
+  delete david;
+}
+
+TEST(test_simple_player_make_card2) {
+  Player * tom = Player_factory("Tom", "Simple");
+  tom->add_card(Card(NINE, CLUBS));
+  tom->add_card(Card(TEN, DIAMONDS));
+  tom->add_card(Card(QUEEN, SPADES));
+  tom->add_card(Card(KING, SPADES));
+  tom->add_card(Card(ACE, SPADES));
+
+  Suit trump;
+  ASSERT_FALSE(tom->make_trump(Card(NINE, HEARTS), true, 1, trump));
+  ASSERT_FALSE(tom->make_trump(Card(NINE, DIAMONDS), true, 1, trump));
+  ASSERT_FALSE(tom->make_trump(Card(NINE, CLUBS), true, 1, trump));
   ASSERT_TRUE(tom->make_trump(Card(NINE, SPADES), true, 1, trump));
   ASSERT_EQUAL(trump, SPADES);
 
+  ASSERT_FALSE(tom->make_trump(Card(NINE, HEARTS), false, 2, trump));
+  ASSERT_FALSE(tom->make_trump(Card(NINE, DIAMONDS), false, 2, trump));
   ASSERT_FALSE(tom->make_trump(Card(NINE, SPADES), false, 2, trump));
-  ASSERT_TRUE(tom->make_trump(Card(NINE, SPADES), true, 2, trump));
-  ASSERT_EQUAL(trump, CLUBS);
-
+  ASSERT_TRUE(tom->make_trump(Card(NINE, CLUBS), false, 2, trump));
+  ASSERT_EQUAL(trump, SPADES);
+  
   delete tom;
-  delete david;
 }
+
+TEST(test_all_jack_make_card3) {
+  Player * steve = Player_factory("Tom", "Simple");
+  steve->add_card(Card(JACK, CLUBS));
+  steve->add_card(Card(JACK, DIAMONDS));
+  steve->add_card(Card(JACK, SPADES));
+  steve->add_card(Card(JACK, HEARTS));
+
+  Suit trump;
+  ASSERT_TRUE(steve->make_trump(Card(NINE, HEARTS), true, 1, trump));
+  ASSERT_EQUAL(trump, HEARTS);
+  ASSERT_TRUE(steve->make_trump(Card(NINE, DIAMONDS), true, 1, trump));
+  ASSERT_EQUAL(trump, DIAMONDS);
+  ASSERT_TRUE(steve->make_trump(Card(NINE, CLUBS), true, 1, trump));
+  ASSERT_EQUAL(trump, CLUBS);
+  ASSERT_TRUE(steve->make_trump(Card(NINE, SPADES), true, 1, trump));
+  ASSERT_EQUAL(trump, SPADES);
+
+  ASSERT_TRUE(steve->make_trump(Card(NINE, HEARTS), false, 2, trump));
+  ASSERT_EQUAL(trump, DIAMONDS);
+  ASSERT_TRUE(steve->make_trump(Card(NINE, DIAMONDS), false, 2, trump));
+  ASSERT_EQUAL(trump, HEARTS);
+  ASSERT_TRUE(steve->make_trump(Card(NINE, SPADES), false, 2, trump));
+  ASSERT_EQUAL(trump, CLUBS);
+  ASSERT_TRUE(steve->make_trump(Card(NINE, CLUBS), false, 2, trump));
+  ASSERT_EQUAL(trump, SPADES);
+  
+  delete steve;
+}
+
+
 
 TEST_MAIN()

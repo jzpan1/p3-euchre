@@ -124,7 +124,7 @@ class SimplePlayer : public Player {
 				highest_card_of_suit = Card(hand[i]);
 				play_index = i;
 			}
-			if (follow_suit && hand[i].get_suit(trump) == led_suit) {
+			if (!follow_suit && hand[i].get_suit(trump) == led_suit) {
 				highest_card_of_suit = Card(hand[i]);
 				play_index = i;
 				follow_suit = true;
