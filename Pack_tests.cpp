@@ -41,25 +41,27 @@ TEST(test_pack_empty) {
     Pack pack;
     Card current;
     
-    for (int i = 0; i < pack_size; i++) {
+    
+    for (int i = 0; i < pack_size -1; i++) {
         current = pack.deal_one();
         ASSERT_FALSE(pack.empty());
     }
 
+    current = pack.deal_one();
     ASSERT_TRUE(pack.empty());
 }
 
 TEST(test_shuffle) {
     Pack pack;
     Card first = pack.deal_one();
-    
+    //Permutation in ( 0 1 3 7 15 6 13 2 5 11 23 22 20 16 8 17 10 21 18 12 )( 4 9 19 14 4 )
     pack.shuffle();
-    Card current;
-    for (int i = 0; i < 17; i++) {
-        current = pack.deal_one();
-    }
-    //{1, 3, 5, 7, 9, 13, 15, 17, 19, 21, 23, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22} 6
-    ASSERT_EQUAL(current, first);
+    Card third;
+    pack.deal_one();
+    pack.deal_one();
+    third = pack.deal_one();
+
+    ASSERT_EQUAL(third, first);
 }
 
 TEST_MAIN()
