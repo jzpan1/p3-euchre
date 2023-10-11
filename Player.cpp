@@ -38,7 +38,7 @@ class SimplePlayer : public Player {
 				if (c.is_trump(possible_trump) && c.is_face_or_ace()) {
 					trump_face_count++;
 				}
-				if (trump_face_count < 2){
+				if (trump_face_count >= 2){
 					order_up_suit = possible_trump;
 					return true;
 				}

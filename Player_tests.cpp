@@ -74,7 +74,7 @@ TEST(test_simple_player_make_cards) {
   ASSERT_TRUE(david->make_trump(Card(NINE, SPADES), true, 2, trump));
   ASSERT_EQUAL(trump, CLUBS);
 
-  ASSERT_TRUE(david->make_trump(Card(NINE, SPADES), false, 1, trump)); //true
+  ASSERT_FALSE(david->make_trump(Card(NINE, SPADES), false, 1, trump)); //true
 
   ASSERT_TRUE(tom->make_trump(Card(NINE, SPADES), true, 1, trump));
   ASSERT_EQUAL(trump, SPADES);
