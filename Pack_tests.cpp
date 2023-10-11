@@ -43,6 +43,7 @@ TEST(test_pack_empty) {
     
     for (int i = 0; i < pack_size; i++) {
         current = pack.deal_one();
+        ASSERT_FALSE(pack.empty());
     }
 
     ASSERT_TRUE(pack.empty());
