@@ -1,6 +1,7 @@
 #include "Player.hpp"
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -142,7 +143,96 @@ class SimplePlayer : public Player {
 };
 
 class HumanPlayer : public Player {
+ public:
+	HumanPlayer(string player_name):
+	name(player_name) { }
 
+	//EFFECTS returns player's name
+	const string & get_name() const override {
+		return name;
+	}
+	
+	//REQUIRES player has less than MAX_HAND_SIZE cards
+  //EFFECTS  adds Card c to Player's hand
+	void add_card(const Card &c) override {
+		assert(hand.size() < MAX_HAND_SIZE);
+		hand.push_back(c);
+		sort_hand();
+	}
+
+	//REQUIRES round is 1 or 2
+  //MODIFIES order_up_suit
+  //EFFECTS If Player wishes to order up a trump suit then return true and
+  //  change order_up_suit to desired suit.  If Player wishes to pass, then do
+  //  not modify order_up_suit and return false.
+  bool make_trump(const Card &upcard, bool is_dealer,
+                          int round, Suit &order_up_suit) const override {
+		print_hand();
+		cout << "Human player " << name << ", please enter a suit, or \"pass\":\n";
+		string decision;
+		cin >> decision;
+
+		if (decision != "pass") {
+			Suit ordered_up = string_to_suit(decision);
+			order_up_suit = ordered_up;
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	//REQUIRES Player has at least one card
+  //EFFECTS  Player adds one card to hand and removes one card from hand.
+  void add_and_discard(const Card &upcard) override {
+		assert(hand.size() > 0);
+		// hand.push_back(Card(upcard));
+		// sort_hand();
+		print_hand();
+		cout << "Discard upcard: [-1]\n";
+		cout << "Human player " << name << ", please select a card to discard:\n";
+		int discard;
+		cin >> discard;
+		if (discard == -1) return;
+		hand.erase(hand.begin() + discard);
+	}
+	//REQUIRES Player has at least one card
+  //EFFECTS  Leads one Card from Player's hand according to their strategy
+  //  "Lead" means to play the first Card in a trick.  The card
+  //  is removed the player's hand.
+  Card lead_card(Suit trump) override {
+		print_hand();
+		cout << "Human player " << name << ", please select a card:\n";
+		int play_index;
+		cin >> play_index;
+		Card played = Card(hand[play_index]);
+		hand.erase(hand.begin() + play_index);
+		return played;
+	}
+	//REQUIRES Player has at least one card
+  //EFFECTS  Plays one Card from Player's hand according to their strategy.
+  //  The card is removed from the player's hand.
+  Card play_card(const Card &led_card, Suit trump) override {
+		print_hand();
+		cout << "Human player " << name << ", please select a card:\n";
+		int play_index;
+		cin >> play_index;
+		Card played = Card(hand[play_index]);
+		hand.erase(hand.begin() + play_index);
+		return played;
+	}
+
+ private:
+	void sort_hand() {
+		sort(hand.begin(), hand.end());
+	}
+	void print_hand() const {
+  	for (size_t i=0; i < hand.size(); ++i)
+    cout << "Human player " << name << "'s hand: "
+         << "[" << i << "] " << hand[i] << "\n";
+	}
+	std::string name;
+	std::vector<Card> hand;
 };
 
 //EFFECTS: Returns a pointer to a player with the given name and strategy
@@ -161,7 +251,10 @@ Player * Player_factory(const std::string &name, const std::string &strategy) {
   //   // The "new" keyword dynamically allocates an object.
   //   return new HumanPlayer(name);
   // }
-
+	if (strategy == "Human") {
+    // The "new" keyword dynamically allocates an object.
+    return new HumanPlayer(name);
+  }
   // Invalid strategy if we get here
   assert(false);
   return nullptr;
@@ -169,6 +262,7 @@ Player * Player_factory(const std::string &name, const std::string &strategy) {
 
 //EFFECTS: Prints player's name to os
 std::ostream & operator<<(std::ostream &os, const Player &p) {
-	assert(false);
+	os << p.get_name();
+	return os;
 }
 
