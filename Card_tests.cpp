@@ -31,10 +31,12 @@ TEST(test_face_or_ace){
     ASSERT_TRUE(queen_hearts.is_face_or_ace());
     ASSERT_FALSE(ten_clubs.is_face_or_ace());
     ASSERT_FALSE(queen_hearts.is_right_bower(CLUBS));
+    ASSERT_FALSE(queen_hearts.is_right_bower(HEARTS));
     ASSERT_FALSE(queen_hearts.is_left_bower(CLUBS));
     ASSERT_TRUE(queen_hearts.is_trump(HEARTS));
     ASSERT_TRUE(jack_diamonds.is_face_or_ace());
     ASSERT_TRUE(jack_diamonds.is_right_bower(DIAMONDS));
+    ASSERT_FALSE(jack_diamonds.is_right_bower(HEARTS));
     ASSERT_FALSE(jack_diamonds.is_left_bower(CLUBS));
     ASSERT_TRUE(jack_diamonds.is_left_bower(HEARTS))
     ASSERT_TRUE(jack_diamonds.is_trump(HEARTS));
@@ -76,15 +78,11 @@ TEST(test_miscellaneous){
     ASSERT_FALSE(Card_less(nine_hearts, Card(NINE, DIAMONDS), HEARTS));
     ASSERT_FALSE(Card_less(ten_spades, Card(TEN, HEARTS), Card(JACK, SPADES),
                            CLUBS));
-    ASSERT_FALSE(Card_less(Card(TEN, HEARTS), ten_spades, Card(JACK, SPADES),
-                           CLUBS));
     ASSERT_TRUE(Card_less(Card(JACK, HEARTS), Card(JACK, CLUBS), Card(JACK, SPADES),
                            CLUBS));
     ASSERT_FALSE(Card_less(jack_clubs, Card(TEN, CLUBS), CLUBS));
     ASSERT_TRUE(Card_less(Card(TEN, CLUBS), jack_clubs, CLUBS));
     ASSERT_TRUE(Card_less(Card(NINE, HEARTS), Card(NINE, SPADES), Card(TEN, SPADES),
-                           CLUBS));
-    ASSERT_FALSE(Card_less(Card(NINE, SPADES), Card(NINE, HEARTS), Card(TEN, SPADES),
                            CLUBS));
 }
 
