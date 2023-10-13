@@ -247,14 +247,9 @@ Player * Player_factory(const std::string &name, const std::string &strategy) {
     // The "new" keyword dynamically allocates an object.
     return new SimplePlayer(name);
   }
-  // Repeat for each other type of Player
-  // if (strategy == "Human") {
-  //   // The "new" keyword dynamically allocates an object.
-  //   return new HumanPlayer(name);
-  // }
 	if (strategy == "Human") {
-    // The "new" keyword dynamically allocates an object.
-    return new HumanPlayer(name);
+		// The "new" keyword dynamically allocates an object.
+		return new HumanPlayer(name);
   }
   // Invalid strategy if we get here
   assert(false);
