@@ -11,14 +11,49 @@ class Game {
  shuffle(should_shuffle), points_to_win(win_points), pack(pack), players(game_players) {}
 
 	void play() {
-		cout << shuffle << points_to_win << pack.deal_one() << players.size();
+		int team0_points = 0;
+		int team1_points = 0;
+		int dealer_index = 0;
+		if (shuffle) {
+			pack.shuffle();
+		}
+		while (team0_points != points_to_win && team1_points != points_to_win) {
+			play_hand(0);
+			pack.shuffle();
+			dealer_index = (dealer_index + 1) % NUM_PLAYERS;
+		}
 	}
  private:
+	//EFFECTS: play the entirety of a single hand.
+	void play_hand(int const dealer_index) {
+		const int num_tricks = 5;
+
+		deal();
+		make_trump();
+		int leader_index = dealer_index;
+		for (int i = 0; i < num_tricks; i++) {
+			leader_index = play_trick(leader_index);
+		}
+	}
+	
+	//EFFECTS: Deal 5 cards to each player, starting
+	//         to the right(?) of the dealer
+	void deal() {};
+	//EFFECTS: Go through the process of choosing a trump suit
+	void make_trump() {};
+	
+	//EFFECTS: Play a single trick, given the leader
+	int play_trick(int leader_index) {return 0;};
+
+	static const int NUM_PLAYERS = 4;
+
 	bool shuffle;
 	int points_to_win;
 	
+	Suit trump;
 	Pack &pack;
 	vector<Player*> &players;
+
 };
 
 //EFFECTS: prints instructions for usage of this program. Should be 
