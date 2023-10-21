@@ -74,6 +74,12 @@ class Game {
 			cout << "euchred!" << endl;
 			team1_points += 2;
 		}
+		else if (team1_tricks > team0_tricks) {
+			team1_points++;
+		}
+		else if (team1_tricks < team0_tricks) {
+			team0_points++;
+		}
 	}
 	
 	//EFFECTS: Deal 5 cards to each player, starting
