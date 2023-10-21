@@ -28,8 +28,8 @@ class Game {
 	void play_hand(int const dealer_index) {
 		const int num_tricks = 5;
 
-		deal();
-		make_trump();
+		deal(dealer_index);
+		make_trump(dealer_index);
 		int leader_index = dealer_index;
 		for (int i = 0; i < num_tricks; i++) {
 			leader_index = play_trick(leader_index);
@@ -37,13 +37,63 @@ class Game {
 	}
 	
 	//EFFECTS: Deal 5 cards to each player, starting
-	//         to the right(?) of the dealer
-	void deal() {};
+	//         to the left of the dealer
+	void deal(int const dealer_index) {
+		int dealplayer = dealer_index;
+		for(int j = 0; j < 5; j++){
+			for (int i = 0; i < 4; i++) {
+				if(dealplayer == 3){
+					dealplayer = -1;
+				}
+				dealplayer++;
+				players[dealplayer]->add_card(pack.deal_one());
+			}
+		}
+	};
 	//EFFECTS: Go through the process of choosing a trump suit
-	void make_trump() {};
+	int  make_trump(int dealer_index) {
+		Card c = pack.deal_one();
+		int dealplayer = dealer_index;
+		for (int i = 0; i < 4; i++) {
+			if(dealplayer == 3){
+				dealplayer = -1;
+			}
+			dealplayer++;
+			if(players[dealplayer]->make_trump(c,dealer_index == dealplayer, 1, trump)){
+				return dealplayer;
+			}
+		}
+		for (int i = 0; i < 4; i++) {
+			if(dealplayer == 3){
+				dealplayer = -1;
+			}
+			dealplayer++;
+			if(players[dealplayer]->make_trump(c,dealer_index == dealplayer, 2, trump)){
+				return dealplayer;
+			}
+		}
+	};
 	
 	//EFFECTS: Play a single trick, given the leader
-	int play_trick(int leader_index) {return 0;};
+	int play_trick(int leader_index) {
+		int playindex = leader_index;
+		int winner = 0;
+		Card led_card = players[leader_index]->lead_card(trump);
+		Card hightest = led_card;
+		Card current;
+		for (int i = 0; i < 4; i++) {
+			if(playindex == 3){
+				playindex = -1;
+			}
+			playindex++;
+			current = players[playindex]->play_card(led_card, trump);
+			if(!Card_less(current, hightest, led_card, trump)){
+				hightest = current;
+				winner = playindex;
+			}
+		}
+		return winner;
+	};
 
 	static const int NUM_PLAYERS = 4;
 
