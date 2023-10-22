@@ -46,14 +46,7 @@ class Game {
 
 		Card upcard = deal(dealer_index);
 
-		trump_maker = make_trump(dealer_index, upcard);
-		if (trump_maker == 0 || trump_maker == 2) {
-			trump_team = 0;
-		}
-		else if (trump_maker == 1 || trump_maker == 3) {
-			trump_team = 1;
-		}
-		cout << endl;
+		trump_team = make_trump(dealer_index, upcard);
 
 		int leader_index = (dealer_index + 1) % NUM_PLAYERS;
 		for (int i = 0; i < num_tricks; i++) {
@@ -66,6 +59,11 @@ class Game {
 			}
 		}
 
+		evaluate_score(trump_team, team0_tricks, team1_tricks);
+	}
+
+	//EFFECTS: Calculates and prints score changes for a hand
+	void evaluate_score(bool trump_team, int team0_tricks, int team1_tricks) {
 		if (team1_tricks < team0_tricks) {
 			cout << *players[0] << " and " << *players[2] 
 					 << " win the hand" << endl;
@@ -132,17 +130,25 @@ class Game {
 		players[player_index]->add_card(pack.deal_one());
 		players[player_index]->add_card(pack.deal_one());
 	}
-	//EFFECTS: Go through the process of choosing a trump suit
+	//EFFECTS: Go through the process of choosing a trump suit.
+	//				 Returns the team which made trump.
 	int make_trump(int dealer_index, const Card upcard) {
-		
+		int trump_team = 0;
 		int curr_player = dealer_index;
 		//round 1
 		for (int i = 0; i < 4; i++) {
 			curr_player = (curr_player + 1) % NUM_PLAYERS;
 			if(players[curr_player]->make_trump(upcard, dealer_index == curr_player, 1, trump)){
 				cout << *players[curr_player] << " orders up " << trump << endl;
+				cout << endl;
 				players[dealer_index]->add_and_discard(upcard);
-				return curr_player;
+				if (curr_player == 0 || curr_player == 2) {
+					trump_team = 0;
+				}
+				else if (curr_player == 1 || curr_player == 3) {
+					trump_team = 1;
+				}
+				return trump_team;
 			}
 			else {
 				cout << *players[curr_player] << " passes\n";
@@ -153,12 +159,20 @@ class Game {
 			curr_player = (curr_player + 1) % NUM_PLAYERS;
 			if(players[curr_player]->make_trump(upcard, dealer_index == curr_player, 2, trump)){
 				cout << *players[curr_player] << " orders up " << trump << endl;
-				return curr_player;
+				cout << endl;
+				if (curr_player == 0 || curr_player == 2) {
+					trump_team = 0;
+				}
+				else if (curr_player == 1 || curr_player == 3) {
+					trump_team = 1;
+				}
+				return trump_team;
 			}
 			else {
 				cout << *players[curr_player] << " passes\n";
 			}
 		}
+		
 		return dealer_index;
 	};
 	
@@ -208,52 +222,38 @@ void print_usage() {
 }
 
 int main(int argc, char *argv[]) {
-	
 	for (int i = 0; i < argc; i++) {
 		cout << argv[i] << " ";
 	}
 	cout << endl;
-
-	//should have 12 command line arguments
-	if (argc != 12) {
-		print_usage();
-		return 1;
-	}
 	
-
 	//read in card pack
-	string pack_in = argv[1];
+	string pack_filename = argv[1];
 	ifstream pack_file;
 	try {
-		pack_file.open(pack_in);
+		pack_file.open(pack_filename);
 	}
 	catch (int e) {
-		print_usage();
+		cout << "Error opening " << pack_filename << endl;
 		return 1;
 	}
 	Pack pack(pack_file);
 	pack_file.close();
 
 	//configure shuffling
-	bool should_shuffle = false;
   string shuffle = argv[2];
-	if (shuffle == "shuffle") should_shuffle = true;
-	else if (shuffle == "noshuffle") should_shuffle = false;	
-	else {
-		print_usage();
-		return 1;
-	}
+	bool should_shuffle = shuffle == "shuffle";
 
 	//number of points to win
 	int points_to_win = 0;
 	try {
 		points_to_win = stoi(argv[3]);
 	}
-	catch (int e) {
-		print_usage();
-		return 1;
-	}
+	catch (int e) {	}
 	if (!(points_to_win >= 1 && points_to_win <= 100)
+			//shuffle is not valid
+		  || (shuffle != "shuffle" && shuffle != "noshuffle")
+			|| argc != 12 //should have 12 command line arguments
 		 ) {
 		print_usage();
 		return 1;
@@ -262,14 +262,11 @@ int main(int argc, char *argv[]) {
 	//initialize players
   vector<Player*> players;
 	for (int i = 0; i < 4; i++) {
-		string player_name = argv[4 + 2 * i];
-		string player_strategy = argv[4 + 2 * i + 1];
-
-		if (player_strategy != "Human" && player_strategy != "Simple") {
+		if (argv[4 + 2 * i] != "Human" && argv[4 + 2 * i + 1] != "Simple") {
 			print_usage();
 			return 1;
 		}
-		players.push_back(Player_factory(player_name, player_strategy));
+		players.push_back(Player_factory(argv[4 + 2 * i], argv[4 + 2 * i + 1]));
 	}
 
 	Game game(should_shuffle, points_to_win, pack, players);
