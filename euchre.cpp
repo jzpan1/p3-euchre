@@ -8,8 +8,8 @@ using namespace std;
 class Game {
  public:
  Game(bool should_shuffle, int win_points, Pack &pack, vector<Player*> &game_players) :
- shuffle(should_shuffle), points_to_win(win_points), pack(pack), players(game_players), 
- team0_points(0), team1_points(0) {}
+	 shuffle(should_shuffle), points_to_win(win_points), team0_points(0), team1_points(0), pack(pack), players(game_players)
+	{}
 
 	void play() {
 		int dealer_index = 0;
@@ -18,11 +18,17 @@ class Game {
 			pack.shuffle();
 		}
 		while (team0_points < points_to_win && team1_points < points_to_win) {
-			cout << "Hand " << hand;
+			cout << "Hand " << hand << endl;
 			++hand;
 			play_hand(dealer_index);
-			pack.shuffle();
+			if (shuffle) pack.shuffle();
 			dealer_index = (dealer_index + 1) % NUM_PLAYERS;
+		}
+		if (team0_points >= points_to_win) {
+			cout << *players[0] << " and " << *players[2] << " win!" << endl;
+		}
+		if (team1_points >= points_to_win) {
+			cout << *players[1] << " and " << *players[3] << " win!" << endl;
 		}
 	}
  private:
@@ -36,17 +42,18 @@ class Game {
 		//corresponds to the number of the team who made trump
 		int trump_team; //(false if team 0, true if team 1)
 
-		cout << players[dealer_index]->get_name() << " deals";
-		deal(dealer_index);
+		Card upcard = deal(dealer_index);
 
-		trump_maker = make_trump(dealer_index);
+		trump_maker = make_trump(dealer_index, upcard);
 		if (trump_maker == 0 || trump_maker == 2) {
 			trump_team = 0;
 		}
 		else if (trump_maker == 1 || trump_maker == 3) {
 			trump_team = 1;
 		}
-		int leader_index = dealer_index;
+		cout << endl;
+
+		int leader_index = (dealer_index + 1) % NUM_PLAYERS;
 		for (int i = 0; i < num_tricks; i++) {
 			leader_index = play_trick(leader_index);
 			if (leader_index == 0 || leader_index == 2) {
@@ -57,88 +64,117 @@ class Game {
 			}
 		}
 
+		if (team1_tricks < team0_tricks) {
+			cout << *players[0] << " and " << *players[2] << " win the hand" << endl;
+			team0_points++;
+		}
+		else if (team1_tricks > team0_tricks) {
+			cout << *players[1] << " and " << *players[3] << " win the hand" << endl;
+			team1_points++;
+		}
 		//check if euchred or marched
-		if (team0_tricks == 5) {
-			cout << "march!" << endl;
-			team0_points += 2;
-		}
-		else if (team1_tricks == 5) {
-			cout << "march!" << endl;
-			team1_points += 2;
-		}
-		else if (team0_tricks >= 3 && trump_team) {
+		if (team0_tricks >= 3 && trump_team) {
 			cout << "euchred!" << endl;
-			team0_points += 2;
+			team0_points++;
 		}
 		else if (team1_tricks >= 3 && !trump_team) {
 			cout << "euchred!" << endl;
-			team1_points += 2;
-		}
-		else if (team1_tricks > team0_tricks) {
 			team1_points++;
 		}
-		else if (team1_tricks < team0_tricks) {
+		else if (team0_tricks == 5) {
+			cout << "march!" << endl;
 			team0_points++;
 		}
+		else if (team1_tricks == 5) {
+			cout << "march!" << endl;
+			team1_points++;
+		}
+		
+		cout << *players[0] << " and " << *players[2] << " have " << team0_points << " points\n";
+		cout << *players[1] << " and " << *players[3] << " have " << team1_points << " points\n\n";
 	}
 	
-	//EFFECTS: Deal 5 cards to each player, starting
-	//         to the left of the dealer
-	void deal(int const dealer_index) {
+	//EFFECTS: Deal 5 cards to each player, starting to the left of the dealer.
+	//         Returns the upcard.
+	Card deal(int const dealer_index) {
+		cout << *players[dealer_index] << " deals" << endl;
+
 		int dealplayer = dealer_index;
-		for(int j = 0; j < 5; j++){
-			for (int i = 0; i < 4; i++) {
-				if(dealplayer == 3){
-					dealplayer = -1;
-				}
-				dealplayer++;
-				players[dealplayer]->add_card(pack.deal_one());
-			}
+		//first round
+		for (int i = 0; i < 4; i++) {
+			dealplayer = (dealplayer + 1) % NUM_PLAYERS;
+			if (i%2 == 0) deal_three(dealplayer);
+			else deal_two(dealplayer);
 		}
+		//second round
+		for (int i = 0; i < 4; i++) {
+			dealplayer = (dealplayer + 1) % NUM_PLAYERS;
+			if (i%2 == 0) deal_two(dealplayer);
+			else deal_three(dealplayer);
+		}
+		Card upcard = pack.deal_one();
+		cout << upcard << " turned up" << endl;
+		return upcard;
 	};
+
+	void deal_two(const int player_index) {
+		players[player_index]->add_card(pack.deal_one());
+		players[player_index]->add_card(pack.deal_one());
+	}
+	void deal_three(const int player_index) {
+		players[player_index]->add_card(pack.deal_one());
+		players[player_index]->add_card(pack.deal_one());
+		players[player_index]->add_card(pack.deal_one());
+	}
 	//EFFECTS: Go through the process of choosing a trump suit
-	int  make_trump(int dealer_index) {
-		Card c = pack.deal_one();
-		int dealplayer = dealer_index;
+	int make_trump(int dealer_index, const Card upcard) {
+		
+		int curr_player = dealer_index;
+		//round 1
 		for (int i = 0; i < 4; i++) {
-			if(dealplayer == 3){
-				dealplayer = -1;
+			curr_player = (curr_player + 1) % NUM_PLAYERS;
+			if(players[curr_player]->make_trump(upcard, dealer_index == curr_player, 1, trump)){
+				cout << *players[curr_player] << " orders up " << trump << endl;
+				players[dealer_index]->add_and_discard(upcard);
+				return curr_player;
 			}
-			dealplayer++;
-			if(players[dealplayer]->make_trump(c,dealer_index == dealplayer, 1, trump)){
-				return dealplayer;
+			else {
+				cout << *players[curr_player] << " passes\n";
 			}
 		}
+		//round 2
 		for (int i = 0; i < 4; i++) {
-			if(dealplayer == 3){
-				dealplayer = -1;
+			curr_player = (curr_player + 1) % NUM_PLAYERS;
+			if(players[curr_player]->make_trump(upcard, dealer_index == curr_player, 2, trump)){
+				cout << *players[curr_player] << " orders up " << trump << endl;
+				return curr_player;
 			}
-			dealplayer++;
-			if(players[dealplayer]->make_trump(c,dealer_index == dealplayer, 2, trump)){
-				return dealplayer;
+			else {
+				cout << *players[curr_player] << " passes\n";
 			}
 		}
+		return dealer_index;
 	};
 	
 	//EFFECTS: Play a single trick, given the leader.
 	//         Returns the winner of the trick.
 	int play_trick(int leader_index) {
-		int playindex = leader_index;
-		int winner = 0;
+		int play_index = leader_index;
+		int winner = leader_index;
 		Card led_card = players[leader_index]->lead_card(trump);
-		Card hightest = led_card;
-		Card current;
-		for (int i = 0; i < 4; i++) {
-			if(playindex == 3){
-				playindex = -1;
-			}
-			playindex++;
-			current = players[playindex]->play_card(led_card, trump);
-			if(!Card_less(current, hightest, led_card, trump)){
-				hightest = current;
-				winner = playindex;
+		cout << led_card << " led by " << *players[leader_index] << endl;
+		Card highest = led_card;
+		Card current_card;
+		for (int i = 0; i < 3; i++) {
+			play_index = (play_index + 1) % NUM_PLAYERS;
+			current_card = players[play_index]->play_card(led_card, trump);
+			cout << current_card << " played by " << *players[play_index] << endl;
+			if(!Card_less(current_card, highest, led_card, trump)){
+				highest = current_card;
+				winner = play_index;
 			}
 		}
+		cout << *players[winner] << " takes the trick\n\n";
 		return winner;
 	}
 
@@ -221,7 +257,7 @@ int main(int argc, char *argv[]) {
   vector<Player*> players;
 	for (int i = 0; i < 4; i++) {
 		string player_name = argv[4 + 2 * i];
-		string player_strategy = argv[4 + 2 * i];
+		string player_strategy = argv[4 + 2 * i + 1];
 
 		if (player_strategy != "Human" && player_strategy != "Simple") {
 			print_usage();
