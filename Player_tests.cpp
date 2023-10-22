@@ -160,6 +160,26 @@ TEST(test_simple_player_make_card1) {
   delete david;
 }
 
+TEST(test_add_and_discard){
+  Player* james = Player_factory("James", "Simple");
+  james->add_card(Card(NINE, HEARTS));
+  james->add_card(Card(TEN, SPADES));
+  james->add_card(Card(QUEEN, DIAMONDS));
+  james->add_card(Card(KING, CLUBS));
+  james->add_card(Card(ACE, SPADES));
+
+  james->add_and_discard(Card(JACK, HEARTS));
+  james->add_and_discard(Card(KING, DIAMONDS));
+
+  ASSERT_EQUAL(james->play_card(Card(NINE, DIAMONDS), CLUBS), Card(KING, DIAMONDS));
+  ASSERT_EQUAL(james->play_card(Card(NINE, SPADES), CLUBS), Card(ACE, SPADES));
+  ASSERT_EQUAL(james->play_card(Card(NINE, SPADES), CLUBS), Card(JACK, HEARTS));
+  ASSERT_EQUAL(james->play_card(Card(ACE, HEARTS), CLUBS), Card(QUEEN, DIAMONDS));
+  ASSERT_EQUAL(james->play_card(Card(ACE, HEARTS), CLUBS), Card(KING, CLUBS));
+  
+  delete james;
+}
+
 TEST(test_simple_player_make_card2) {
   Player * tom = Player_factory("Tom", "Simple");
   tom->add_card(Card(NINE, CLUBS));
