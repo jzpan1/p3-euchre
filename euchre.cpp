@@ -8,7 +8,8 @@ using namespace std;
 class Game {
  public:
  Game(bool should_shuffle, int win_points, Pack &pack, vector<Player*> &game_players) :
-	 shuffle(should_shuffle), points_to_win(win_points), team0_points(0), team1_points(0), pack(pack), players(game_players)
+	 shuffle(should_shuffle), points_to_win(win_points), team0_points(0), 
+	 team1_points(0), pack(pack), players(game_players)
 	{}
 
 	void play() {
@@ -66,11 +67,13 @@ class Game {
 		}
 
 		if (team1_tricks < team0_tricks) {
-			cout << *players[0] << " and " << *players[2] << " win the hand" << endl;
+			cout << *players[0] << " and " << *players[2] 
+					 << " win the hand" << endl;
 			team0_points++;
 		}
 		else if (team1_tricks > team0_tricks) {
-			cout << *players[1] << " and " << *players[3] << " win the hand" << endl;
+			cout << *players[1] << " and " << *players[3] 
+					 << " win the hand" << endl;
 			team1_points++;
 		}
 		//check if euchred or marched
@@ -91,8 +94,10 @@ class Game {
 			team1_points++;
 		}
 		
-		cout << *players[0] << " and " << *players[2] << " have " << team0_points << " points\n";
-		cout << *players[1] << " and " << *players[3] << " have " << team1_points << " points\n\n";
+		cout << *players[0] << " and " << *players[2] 
+				 << " have " << team0_points << " points\n";
+		cout << *players[1] << " and " << *players[3] 
+				 << " have " << team1_points << " points\n\n";
 	}
 	
 	//EFFECTS: Deal 5 cards to each player, starting to the left of the dealer.

@@ -164,7 +164,8 @@ std::istream & operator>>(std::istream &is, Card &card) {
 }
 
 bool operator<(const Card &lhs, const Card &rhs) {
-  return (lhs.get_rank() < rhs.get_rank()) || (lhs.get_rank() == rhs.get_rank() && lhs.get_suit() < rhs.get_suit());
+  return (lhs.get_rank() < rhs.get_rank()) || 
+  (lhs.get_rank() == rhs.get_rank() && lhs.get_suit() < rhs.get_suit());
 }
 
 //EFFECTS Returns true if lhs is lower value than rhs or the same card as rhs.
@@ -176,7 +177,8 @@ bool operator<=(const Card &lhs, const Card &rhs) {
 //EFFECTS Returns true if lhs is higher value than rhs.
 //  Does not consider trump.
 bool operator>(const Card &lhs, const Card &rhs) {
-  return (lhs.get_rank() > rhs.get_rank()) || (lhs.get_rank() == rhs.get_rank() && lhs.get_suit() > rhs.get_suit());
+  return (lhs.get_rank() > rhs.get_rank()) || 
+         (lhs.get_rank() == rhs.get_rank() && lhs.get_suit() > rhs.get_suit());
 }
 
 //EFFECTS Returns true if lhs is higher value than rhs or the same card as rhs.
@@ -247,36 +249,12 @@ bool Card_less(const Card &a, const Card &b, Suit trump) {
 //  and the suit led to determine order, as described in the spec.
 bool Card_less(const Card &a, const Card &b, const Card &led_card, Suit trump) {
   Suit led_suit = led_card.get_suit(trump);
-  //both cards are the same (shouldn't happen?)
-  if (a==b) {
-    return false;
-  }
-
-  //check if trump prevails
-  if (a.get_suit(trump) == trump && b.get_suit(trump) != trump) {
-    return false;
-  }
-  else if (a.get_suit(trump) != trump && b.get_suit(trump) == trump) {
-    return true;
-  }
-  //both trump suit
-  else if (a.get_suit(trump) == trump && b.get_suit(trump) == trump) {
-    //check bowers
-    if (b.is_right_bower(trump) 
-        || (b.is_left_bower(trump) && !a.is_right_bower(trump))) {
-          return true;
-    }
-    else if (a.is_right_bower(trump) 
-        || (a.is_left_bower(trump) && !b.is_right_bower(trump))) {
-          return false;
-    }
-  }
   //check if led suit prevails
-  else if (a.get_suit(trump) == led_suit && b.get_suit(trump) != led_suit) {
+  if (a.get_suit(trump) == led_suit && b.get_suit(trump) != led_suit) {
     return false;
   }
   else if (b.get_suit(trump) == led_suit && a.get_suit(trump) != led_suit) {
     return true;
   }
-  return a < b;
+  return Card_less(a, b, trump);
 }
