@@ -9,11 +9,11 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/euchre.exe",
-            "args": ["pack.in", "shuffle", "10", "Edsger", "Simple", "Fran", "Simple", "Gabriel", "Simple", "Herb", "Simple"],
+            "args": ["pack.in", "noshuffle", "3", "Ivan", "Human", "Judea", "Human", "Kunle", "Human", "Liskov", "Human"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": false,
+            "externalConsole": true,
             "MIMode": "lldb"
         },
         {

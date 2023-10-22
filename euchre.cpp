@@ -22,6 +22,7 @@ class Game {
 			++hand;
 			play_hand(dealer_index);
 			if (shuffle) pack.shuffle();
+			else pack.reset();
 			dealer_index = (dealer_index + 1) % NUM_PLAYERS;
 		}
 		if (team0_points >= points_to_win) {

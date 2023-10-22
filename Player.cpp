@@ -195,7 +195,9 @@ class HumanPlayer : public Player {
 		int discard;
 		cin >> discard;
 		if (discard == -1) return;
+		hand.push_back(Card(upcard));
 		hand.erase(hand.begin() + discard);
+		sort_hand();
 	}
 	//REQUIRES Player has at least one card
   //EFFECTS  Leads one Card from Player's hand according to their strategy
