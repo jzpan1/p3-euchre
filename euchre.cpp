@@ -39,8 +39,6 @@ class Game {
 		const int num_tricks = 5;
 		int team0_tricks = 0;
 		int team1_tricks = 0;
-		//the index of the player who made trump
-		int trump_maker = 0;
 		//corresponds to the number of the team who made trump
 		int trump_team; //(false if team 0, true if team 1)
 
@@ -221,27 +219,34 @@ void print_usage() {
          << "NAME4 TYPE4" << endl;
 }
 
-int main(int argc, char *argv[]) {
+void print_args(int argc, char* argv[]) {
 	for (int i = 0; i < argc; i++) {
 		cout << argv[i] << " ";
 	}
 	cout << endl;
-	
-	//read in card pack
-	string pack_filename = argv[1];
-	ifstream pack_file;
-	try {
-		pack_file.open(pack_filename);
-	}
-	catch (int e) {
-		cout << "Error opening " << pack_filename << endl;
-		return 1;
-	}
+}
+
+Pack read_pack(string filename) {
+	fstream pack_file;
+	pack_file.open(filename);
 	Pack pack(pack_file);
 	pack_file.close();
+	return pack;
+}
 
+vector<Player*> read_players(char *argv[]) {
+	vector<Player*> players;
+	for (int i = 0; i < 4; i++) {
+		string player_name = argv[4 + 2 * i];
+		string player_strategy = argv[4 + 2 * i + 1];
+		players.push_back(Player_factory(player_name, player_strategy));
+	}
+	return players;
+}
+int main(int argc, char *argv[]) {
+	
 	//configure shuffling
-  string shuffle = argv[2];
+  	string shuffle = argv[2];
 	bool should_shuffle = shuffle == "shuffle";
 
 	//number of points to win
@@ -249,7 +254,12 @@ int main(int argc, char *argv[]) {
 	try {
 		points_to_win = stoi(argv[3]);
 	}
-	catch (int e) {	}
+	catch (int e) {
+		print_usage();
+		return 1;
+	}
+
+	//check points, shuffle, and argc conditions
 	if (!(points_to_win >= 1 && points_to_win <= 100)
 			//shuffle is not valid
 		  || (shuffle != "shuffle" && shuffle != "noshuffle")
@@ -259,15 +269,26 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	//read in card pack
+	Pack pack;
+	try {
+		pack = read_pack(argv[1]);
+	}
+	catch(int e) {
+		cout << "Error opening " << argv[1] << endl;
+	}
+
 	//initialize players
   vector<Player*> players;
-	for (int i = 0; i < 4; i++) {
-		if (argv[4 + 2 * i] != "Human" && argv[4 + 2 * i + 1] != "Simple") {
-			print_usage();
-			return 1;
-		}
-		players.push_back(Player_factory(argv[4 + 2 * i], argv[4 + 2 * i + 1]));
+	try {
+		players = read_players(argv);
+	} 
+	catch(int e) {
+		print_usage();
+		return 1;
 	}
+
+	print_args(argc, argv);
 
 	Game game(should_shuffle, points_to_win, pack, players);
 	game.play();
@@ -275,4 +296,5 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < 4; i++) {
 		delete players[i];
 	}
+	return 0;
 }

@@ -250,11 +250,16 @@ bool Card_less(const Card &a, const Card &b, Suit trump) {
 bool Card_less(const Card &a, const Card &b, const Card &led_card, Suit trump) {
   Suit led_suit = led_card.get_suit(trump);
   //check if led suit prevails
-  if (a.get_suit(trump) == led_suit && b.get_suit(trump) != led_suit) {
+  if (a.get_suit(trump) == led_suit 
+      && b.get_suit(trump) != led_suit
+      && b.get_suit(trump) != trump) {
     return false;
   }
-  else if (b.get_suit(trump) == led_suit && a.get_suit(trump) != led_suit) {
+  else if (b.get_suit(trump) == led_suit 
+           && a.get_suit(trump) != led_suit 
+           && a.get_suit(trump) != trump) {
     return true;
   }
+  
   return Card_less(a, b, trump);
 }

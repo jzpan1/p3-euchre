@@ -184,6 +184,7 @@ Human player Judea's hand: [3] Queen of Hearts
 Human player Judea's hand: [4] Ace of Clubs
 Human player Judea, please enter a suit, or "pass":
 Judea orders up Diamonds
+
 Human player Judea's hand: [0] Nine of Diamonds
 Human player Judea's hand: [1] Ten of Diamonds
 Human player Judea's hand: [2] Jack of Hearts
@@ -191,7 +192,6 @@ Human player Judea's hand: [3] Queen of Hearts
 Human player Judea's hand: [4] Ace of Clubs
 Discard upcard: [-1]
 Human player Judea, please select a card to discard:
-
 Human player Kunle's hand: [0] Nine of Spades
 Human player Kunle's hand: [1] Ten of Spades
 Human player Kunle's hand: [2] Jack of Spades
