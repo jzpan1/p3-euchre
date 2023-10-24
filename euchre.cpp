@@ -227,9 +227,15 @@ void print_args(int argc, char* argv[]) {
 }
 
 Pack read_pack(string filename) {
-	fstream pack_file;
+	ifstream pack_file;
 	pack_file.open(filename);
-	Pack pack(pack_file);
+	Pack pack;
+	if (pack_file.is_open()) {
+		pack = Pack(pack_file);
+	}
+	else {
+		throw std::invalid_argument( "File is not valid" );
+	}
 	pack_file.close();
 	return pack;
 }
@@ -246,7 +252,7 @@ vector<Player*> read_players(char *argv[]) {
 int main(int argc, char *argv[]) {
 	
 	//configure shuffling
-  	string shuffle = argv[2];
+  string shuffle = argv[2];
 	bool should_shuffle = shuffle == "shuffle";
 
 	//number of points to win
@@ -274,8 +280,9 @@ int main(int argc, char *argv[]) {
 	try {
 		pack = read_pack(argv[1]);
 	}
-	catch(int e) {
+	catch(std::invalid_argument const& e) {
 		cout << "Error opening " << argv[1] << endl;
+		return 1;
 	}
 
 	//initialize players
