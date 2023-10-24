@@ -121,13 +121,14 @@ TEST(test_random){
   bob->add_card(Card(KING, HEARTS));
   bob->add_card(Card(ACE, DIAMONDS));
   bob->add_card(Card(JACK, DIAMONDS));
-  
+
   ASSERT_EQUAL(bob->lead_card(DIAMONDS), Card(KING, HEARTS));
   ASSERT_EQUAL(bob->lead_card(DIAMONDS), Card(QUEEN, SPADES));
   ASSERT_EQUAL(bob->lead_card(DIAMONDS), Card(NINE, SPADES));
   ASSERT_EQUAL(bob->lead_card(DIAMONDS), Card(JACK, DIAMONDS));
   ASSERT_EQUAL(bob->lead_card(DIAMONDS), Card(ACE, DIAMONDS));
 
+  delete bob;
 }
 
 TEST(test_all_jack_lead_card) {
