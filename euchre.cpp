@@ -138,8 +138,8 @@ class Game {
 			curr_player = (curr_player + 1) % NUM_PLAYERS;
 			if(players[curr_player]->make_trump(upcard, dealer_index == curr_player, 1, trump)){
 				cout << *players[curr_player] << " orders up " << trump << endl;
-				cout << endl;
 				players[dealer_index]->add_and_discard(upcard);
+				cout << endl;
 				if (curr_player == 0 || curr_player == 2) {
 					trump_team = 0;
 				}

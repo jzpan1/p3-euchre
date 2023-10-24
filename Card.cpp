@@ -30,6 +30,7 @@ Rank string_to_rank(const std::string &str) {
       return static_cast<Rank>(r);
     }
   }
+  cout << str << std::endl;
   assert(false); // Input string didn't match any rank
   return {};
 }

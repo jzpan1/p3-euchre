@@ -29,8 +29,7 @@ Pack::Pack(std::istream& pack_input){
   std::string s;
   Card c;
   for (int i = 0; i < PACK_SIZE; i++) {
-
-      pack_input >> cards[i];
+    pack_input >> cards[i];
   }
 }
 
