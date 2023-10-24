@@ -58,7 +58,7 @@ clean:
 
 # Style check
 CPD ?= /usr/um/pmd-6.0.1/bin/run.sh cpd
-OCLINT ?= /opt/homebrew/bin/oclint
+OCLINT ?= /usr/um/oclint-0.13/bin/oclint
 FILES := \
   Card.cpp \
   Card_tests.cpp \
@@ -74,6 +74,7 @@ CPD_FILES := \
   euchre.cpp
 style :
 	$(OCLINT) \
+    -no-analytics \
     -rule=LongLine \
     -rule=HighNcssMethod \
     -rule=DeepNestedBlock \
