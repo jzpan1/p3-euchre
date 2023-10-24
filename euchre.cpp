@@ -227,7 +227,7 @@ void print_args(int argc, char* argv[]) {
 }
 
 Pack read_pack(string filename) {
-	fstream pack_file;
+	ifstream pack_file;
 	pack_file.open(filename);
 	Pack pack;
 	if (pack_file.is_open()) {
@@ -280,7 +280,7 @@ int main(int argc, char *argv[]) {
 	try {
 		pack = read_pack(argv[1]);
 	}
-	catch(std::invalid_argument e) {
+	catch(std::invalid_argument const& e) {
 		cout << "Error opening " << argv[1] << endl;
 		return 1;
 	}
